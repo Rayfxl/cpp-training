@@ -14,6 +14,7 @@ public:
     void Execute(const std::string& command) noexcept override;
     Pose Query(void) const noexcept override;
 private:
+    void Move(void) noexcept; 
     Pose pose;
 };
 }// namespace adas
