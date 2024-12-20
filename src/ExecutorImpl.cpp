@@ -1,5 +1,7 @@
 #include <memory>
 #include "ExecutorImpl.hpp"
+#include "Command.hpp"
+
 namespace adas
 {
 Executor* Executor::NewExecutor(const Pose& pose) noexcept
