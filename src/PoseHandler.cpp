@@ -7,7 +7,7 @@ PoseHandler::PoseHandler(const Pose& pose) noexcept
       facing(&Direction::GetDirection(pose.heading))
 {
 }
-void PoseHandler::Move() noexcept
+void PoseHandler::Forward() noexcept
 {
     point += facing->Move();
 }

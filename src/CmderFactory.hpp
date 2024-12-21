@@ -3,10 +3,11 @@
 #include <list>
 #include <unordered_map>
 #include "Command.hpp"
+#include "ActionGroup.hpp"
 
 namespace adas
 {
-using Cmder = std::function<void(PoseHandler& poseHandler)>;
+using Cmder = std::function<ActionGroup(PoseHandler& poseHandler)>;
 using CmderList = std::list<Cmder>;
 class CmderFactory final
 {
