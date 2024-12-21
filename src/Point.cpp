@@ -29,6 +29,14 @@ Point& Point::operator+=(const Point& rhs) noexcept
     return *this;
 }
 
+// -= 运算符重载
+Point& Point::operator-=(const Point& rhs) noexcept
+{
+    x -= rhs.x;
+    y -= rhs.y;
+    return *this;
+}
+
 // 获取 x 值
 int Point::GetX(void) const noexcept
 {
