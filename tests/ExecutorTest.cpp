@@ -6,11 +6,6 @@
 namespace adas
 {
 
-// bool operator==(const Pose& lhs, const Pose& rhs) 
-// {   
-//     return std::tie(lhs.x, lhs.y, lhs.heading) == std::tie(rhs.x, rhs.y, rhs.heading); 
-// }
-
 TEST(ExecutorTest, should_return_init_pose_when_without_command)
 {
     std::unique_ptr<Executor> executor(Executor::NewExecutor({0, 0, 'E'}));
