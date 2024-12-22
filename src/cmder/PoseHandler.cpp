@@ -2,9 +2,8 @@
 
 namespace adas
 {
-PoseHandler::PoseHandler(const Pose& pose) noexcept 
-    : point(pose.x, pose.y),
-      facing(&Direction::GetDirection(pose.heading))
+PoseHandler::PoseHandler(const Pose& pose) noexcept
+    : point(pose.x, pose.y), facing(&Direction::GetDirection(pose.heading))
 {
 }
 void PoseHandler::Forward() noexcept
@@ -48,4 +47,4 @@ bool PoseHandler::IsReverse() const noexcept
     return reverse;
 }
 
-}// namespace adas
+}  // namespace adas

@@ -1,10 +1,8 @@
-#pragma once
-#include "ActionGroup.hpp"
-#include "PoseHandler.hpp"
+#include "Command.hpp"
 
 namespace adas
 {
-class MoveCommand
+class BusMoveCommand : public MoveCommand
 {
 public:
     ActionGroup operator()(PoseHandler& poseHandler) const noexcept
@@ -19,7 +17,7 @@ public:
         return actionGroup;
     }
 };
-class TurnLeftCommand
+class BusTurnLeftCommand : public TurnLeftCommand
 {
 public:
     ActionGroup operator()(PoseHandler& poseHandler) const noexcept
@@ -30,14 +28,19 @@ public:
                 poseHandler.IsReverse() ? ActionType::BACKWARD_1_STEP_ACTION : ActionType::FORWARD_1_STEP_ACTION;
             actionGroup.PushAction(fastAction);  // 快速模式额外一步
         }
+
+        const auto extraAction =
+            poseHandler.IsReverse() ? ActionType::BACKWARD_1_STEP_ACTION : ActionType::FORWARD_1_STEP_ACTION;
+        actionGroup.PushAction(extraAction);
 
         const auto turnAction =
             poseHandler.IsReverse() ? ActionType::REVERSE_TURNLEFT_ACTION : ActionType::TURNLEFT_ACTION;
         actionGroup.PushAction(turnAction);
+
         return actionGroup;
     }
 };
-class TurnRightCommand
+class BusTurnRightCommand : public TurnRightCommand
 {
 public:
     ActionGroup operator()(PoseHandler& poseHandler) const noexcept
@@ -49,48 +52,15 @@ public:
             actionGroup.PushAction(fastAction);  // 快速模式额外一步
         }
 
+        const auto extraAction =
+            poseHandler.IsReverse() ? ActionType::BACKWARD_1_STEP_ACTION : ActionType::FORWARD_1_STEP_ACTION;
+        actionGroup.PushAction(extraAction);
+
         const auto turnAction =
             poseHandler.IsReverse() ? ActionType::REVERSE_TURNRIGHT_ACTION : ActionType::TURNRIGHT_ACTION;
         actionGroup.PushAction(turnAction);
-        return actionGroup;
-    }
-};
-class FastCommand final
-{
-public:
-    ActionGroup operator()(PoseHandler& poseHandler) const noexcept
-    {
-        ActionGroup actionGroup;
-        actionGroup.PushAction(ActionType::BE_FAST_ACTION);
-        return actionGroup;
-    }
-};
 
-class ReverseCommand final
-{
-public:
-    ActionGroup operator()(PoseHandler& poseHandler) const noexcept
-    {
-        ActionGroup actionGroup;
-        actionGroup.PushAction(ActionType::BE_REVERSE_ACTION);
         return actionGroup;
-    }
-};
-
-class TurnRoundCommand
-{
-public:
-    ActionGroup operator()(PoseHandler& poseHandler) const noexcept
-    {
-        if (poseHandler.IsReverse()) {
-            return ActionGroup();
-        }
-        if (poseHandler.IsFast()) {
-            return ActionGroup({ActionType::FORWARD_1_STEP_ACTION, ActionType::TURNLEFT_ACTION,
-                                ActionType::FORWARD_1_STEP_ACTION, ActionType::TURNLEFT_ACTION});
-        }
-        return ActionGroup(
-            {ActionType::TURNLEFT_ACTION, ActionType::FORWARD_1_STEP_ACTION, ActionType::TURNLEFT_ACTION});
     }
 };
 

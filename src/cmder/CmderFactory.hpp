@@ -1,10 +1,13 @@
 #pragma once
 #include <functional>
 #include <list>
-#include <unordered_map>
 #include <string_view>
-#include "Command.hpp"
+#include <unordered_map>
+
 #include "ActionGroup.hpp"
+#include "BusCommand.hpp"
+#include "Command.hpp"
+#include "SportsCarCommand.hpp"
 
 namespace adas
 {
@@ -17,18 +20,20 @@ public:
     ~CmderFactory(void) noexcept = default;
     CmderFactory(const CmderFactory&) noexcept = delete;
     CmderFactory& operator=(const CmderFactory&) noexcept = delete;
+
 public:
-    CmderList GetCmders(const std::string& commands) const noexcept;
+    CmderList GetCmders(const std::string& commands, VehicleType carType = VehicleType::OTHER) const noexcept;
 
 private:
-    std::string ParseCommandString(std::string_view commands) const noexcept;
+    std::string ParseCommandString(std::string_view commands, VehicleType carType = VehicleType::OTHER) const noexcept;
     void ReplaceAll(std::string& inout, std::string_view what, std::string_view with) const noexcept;
 
 private:
     const std::unordered_map<char, Cmder> cmderMap{
-        {'M', MoveCommand()}, {'L', TurnLeftCommand()},
-        {'R', TurnRightCommand()}, {'F', FastCommand()}, 
-        {'B', ReverseCommand()}, {'Z', TurnRoundCommand()},
+        {'M', MoveCommand()},          {'L', TurnLeftCommand()},          {'R', TurnRightCommand()},
+        {'F', FastCommand()},          {'B', ReverseCommand()},           {'Z', TurnRoundCommand()},
+        {'A', SportsCarMoveCommand()}, {'D', SportsCarTurnLeftCommand()}, {'G', SportsCarTurnRightCommand()},
+        {'T', BusMoveCommand()},       {'Y', BusTurnLeftCommand()},       {'U', BusTurnRightCommand()},
     };
 };
-}// namespace adas
+}  // namespace adas
