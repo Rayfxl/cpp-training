@@ -1,75 +1,34 @@
-#include <memory>
 #include "ExecutorImpl.hpp"
+
+#include <algorithm>
+#include <functional>
+#include <memory>
+#include <unordered_map>
+
+#include "CmderFactory.hpp"
+#include "Singleton.hpp"
+
 namespace adas
 {
-Executor* Executor::NewExecutor(const Pose& pose) noexcept
+Executor* Executor::NewExecutor(const Pose& pose, VehicleType carType) noexcept
 {
-    return new (std::nothrow) ExecutorImpl(pose);
+    return new (std::nothrow) ExecutorImpl(pose, carType);
 }
 
-ExecutorImpl::ExecutorImpl(const Pose& pose) noexcept : pose(pose)
+ExecutorImpl::ExecutorImpl(const Pose& pose, VehicleType carType) noexcept : poseHandler(pose), carType(carType)
 {
 }
 
-void ExecutorImpl::Execute(const std::string& commands) noexcept
+void ExecutorImpl::Execute(const std::string& commands, VehicleType carType) noexcept
 {
-    for (const auto cmd : commands) {
-        std::unique_ptr<ICommand> cmder;
+    const auto cmders = Singleton<CmderFactory>::Instance().GetCmders(commands, carType);
 
-        if (cmd == 'M') {
-            cmder = std::make_unique<MoveCommand>();
-        } else if (cmd == 'L') {
-            cmder = std::make_unique<TurnLeftCommand>();
-        } else if (cmd == 'R') {
-            cmder = std::make_unique<TurnRightCommand>();
-        }
-        if (cmder) {
-            cmder->DoOperate(*this);
-        }
-    }
-}
-
-void ExecutorImpl::Move() noexcept
-{
-    if (pose.heading == 'E') {
-        ++pose.x;
-    } else if (pose.heading == 'W') {
-        --pose.x;
-    } else if (pose.heading == 'N') {
-        ++pose.y;
-    } else if (pose.heading == 'S') {
-        --pose.y;
-    }
-}
-
-void ExecutorImpl::TurnLeft() noexcept
-{
-    if (pose.heading == 'E') {
-        pose.heading = 'N';
-    } else if (pose.heading == 'W') {
-        pose.heading = 'S';
-    } else if (pose.heading == 'N') {
-        pose.heading = 'W';
-    } else if (pose.heading == 'S') {
-        pose.heading = 'E';
-    }
-}
-
-void ExecutorImpl::TurnRight() noexcept
-{
-    if (pose.heading == 'E') {
-        pose.heading = 'S';
-    } else if (pose.heading == 'W') {
-        pose.heading = 'N';
-    } else if (pose.heading == 'N') {
-        pose.heading = 'E';
-    } else if (pose.heading == 'S') {
-        pose.heading = 'W';
-    }
+    std::for_each(cmders.begin(), cmders.end(),
+                  [this](const Cmder& cmder) noexcept { cmder(poseHandler).DoOperate(poseHandler); });
 }
 
 Pose ExecutorImpl::Query() const noexcept
 {
-    return pose;
+    return poseHandler.Query();
 }
-}// namespace adas
+}  // namespace adas
